@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="image/roda.ico" type="image/x-icon">
+    <title>Oasis Customs - Calculadora</title>
+    <style>
+        body {
+            /* Configuração da Imagem de Fundo */
+            background-color: #022831; 
+            background-image: url('image/image.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover; 
+            background-attachment: fixed; 
+            
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Máscara escura */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: rgba(2, 40, 49, 0.85); 
+            z-index: -1;
+        }
+
+        .valor { color: #065eea; font-weight: bold; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(16, 12, 61, 0.6); 
+            border: 1px solid #eeedee;
+            border-radius: 12px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { border-color: #0ba8eb; }
+
+        .card-combos {
+            border-color: #f0ebec;
+            background: rgba(16, 12, 61, 0.6);
+        }
+
+        /* ÁREA DO TOTAL E BOTÕES */
+        .total-area {
+            grid-column: 2 / -1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px dashed rgba(56, 243, 255, 0.3);
+        }
+
+        h2 {
+            margin: 0 0 15px 0;
+            text-align: center;
+            font-size: 22px;
+            color: #078ebb;
+            border-bottom: 1px solid #f7eaf055;
+            padding-bottom: 8px;
+        }
+
+        .item {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            gap: 10px;
+        }
+
+        .item span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        select, .checkbox {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #1da9b8;
+            color: rgb(0, 0, 0);
+            padding: 4px;
+            border-radius: 6px;
+            max-width: 140px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox:checked {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .qtd-box { display: flex; align-items: center; gap: 5px; }
+
+        .btn {
+            background: #008c9e; border: none; padding: 4px 10px; border-radius: 6px;
+            cursor: pointer; color: white; font-weight: bold;
+            transition: transform 0.1s, background 0.2s;
+        }
+        .btn:hover { background: #00d66b; }
+        .qtd-display {
+            background: rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 6px;
+            min-width: 25px; text-align: center; border: 1px solid #f4eff1; font-weight: bold;
+        }
+
+        #resultado {
+            text-align: center; font-size: 42px; margin: 0 0 20px 0;
+            color: #00ff88; font-weight: bold;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+            transition: color 0.3s;
+        }
+
+        /* Animações Gerais */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #fff; text-shadow: 0 0 10px white; }
+            100% { transform: scale(1); }
+        }
+        .animar-texto { animation: pop 0.3s ease-in-out; }
+
+        /* Container de botões finais */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .main-btn {
+            padding: 12px 30px; 
+            font-size: 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .zerar-btn {
+            background: transparent;
+            border: 2px solid #ff4d4d;
+            color: #ff4d4d;
+        }
+        .zerar-btn:hover {
+            background: #ff4d4d;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+        }
+
+        .finalizar-btn {
+            background: linear-gradient(135deg, #008c9e, #00b8d4);
+            border: 2px solid #38f3ff;
+            color: white;
+            box-shadow: 0 0 15px rgba(56, 243, 255, 0.2);
+        }
+        .finalizar-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(56, 243, 255, 0.5);
+        }
+
+        /* === ESTILOS DO MODAL === */
+        .modal-overlay {
+            display: none; /* Oculto por padrão */
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Animação "Drive In" - Carro chegando e freando */
+        @keyframes driveIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-100%) skewX(-20deg);
+            }
+            60% {
+                transform: translateX(5%) skewX(10deg); /* Passa um pouco (freio) */
+            }
+            80% {
+                transform: translateX(-2%) skewX(-5deg); /* Ajuste */
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) skewX(0);
+            }
+        }
+
+        .modal-content {
+            background: #022831;
+            border: 2px solid #38f3ff;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(56, 243, 255, 0.15);
+            position: relative;
+            
+            /* Ativa a animação quando o modal abre */
+            animation: driveIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .modal-header {
+            text-align: center;
+            border-bottom: 2px solid #38f3ff;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-style: italic; /* Estilo mais "rápido" */
+        }
+
+        .modal-body {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        .resumo-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 0;
+        }
+
+        .modal-total {
+            text-align: center;
+            font-size: 28px;
+            color: #00ff88;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-novo {
+            background: #00ff88;
+            color: #00331b;
+        }
+        .btn-novo:hover { background: #00cc6a; }
+        
+        .btn-fechar {
+            background: #444;
+            color: white;
+        }
+        .btn-fechar:hover { background: #666; }
+
+
+        @media (max-width: 1100px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .total-area { grid-column: auto; } 
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            .total-area { grid-column: auto; }
+        }
+
+footer {
+    display: flex;
+    justify-content: center; /* centraliza horizontalmente */
+    align-items: center; /* centraliza verticalmente */
+    height: 100px;
+    color: white;
+}
+
+footer p {
+    font-size: 36px; /* aumenta o tamanho do título */
+    margin: 0;
+}
+
+
+    </style>
+</head>
+<body>
+
+<div class="grid">
+    <div class="card card-combos">
+        <h2>Combos</h2>
+        <div class="item">
+            <span>Full Tuning <span class="valor">(R$ 84.000)</span></span>
+            <input type="checkbox" id="comboFull" class="checkbox" onchange="gerenciarCombos(&#39;full&#39;)">
+        </div>
+        <div class="item">
+            <span>Full Tuning + Full Blindagem <span class="valor">(R$ 116.400)</span></span>
+            <input type="checkbox" id="comboFullBlindado" class="checkbox" onchange="gerenciarCombos(&#39;fullBlindado&#39;)">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Performance</h2>
+        <div class="item">Motor 
+            <select id="motor" onchange="calcularTotal()">
+                <option value="0">Nenhum</option>
+                <option value="9000">Nível 1 (R$ 9.000)</option>
+                <option value="11760">Nível 2 (R$ 11.760)</option>
+                <option value="13800">Nível 3 (R$ 13.800)</option>
+                <option value="17400">Nível 4 (R$ 17.400)</option>
+                <option value="22200">Nível 5 (R$ 22.200)</option>
+            </select>
+        </div>
+        <div class="item">Freio 
+            <select id="freio" onchange="calcularTotal()">
+                <option value="0">Nenhum</option>
+                <option value="9600">Nível 1 (R$ 9.600)</option>
+                <option value="11400">Nível 2 (R$ 11.400)</option>
+                <option value="13200">Nível 3 (R$ 13.200)</option>
+                <option value="17400">Nível 4 (R$ 17.400)</option>
+            </select>
+        </div>
+        <div class="item">Transmissão 
+            <select id="transmissao" onchange="calcularTotal()">
+                <option value="0">Nenhum</option>
+                <option value="11400">Nível 1 (R$ 11.400)</option>
+                <option value="13200">Nível 2 (R$ 13.200)</option>
+                <option value="17400">Nível 3 (R$ 17.400)</option>
+                <option value="22200">Nível 4 (R$ 22.200)</option>
+            </select>
+        </div>
+        <div class="item">Suspensão 
+            <select id="suspensao" onchange="calcularTotal()">
+                <option value="0">Nenhum</option>
+                <option value="9000">Nível 1 (R$ 9.000)</option>
+                <option value="11400">Nível 2 (R$ 11.400)</option>
+                <option value="13800">Nível 3 (R$ 13.800)</option>
+                <option value="17400">Nível 4 (R$ 17.400)</option>
+                <option value="22200">Nível 5 (R$ 22.200)</option>
+            </select>
+        </div>
+        <div class="item">Blindagem 
+            <select id="blindagem" onchange="calcularTotal()">
+                <option value="0">Nenhum</option>
+                <option value="13200">Nível 1 (R$ 13.200)</option>
+                <option value="15000">Nível 2 (R$ 15.000)</option>
+                <option value="19800">Nível 3 (R$ 19.800)</option>
+                <option value="25800">Nível 4 (R$ 25.800)</option>
+                <option value="32400">Nível 5 (R$ 32.400)</option>
+            </select>
+        </div>
+        <div class="item">
+            <span>Nitro <span class="valor">(R$ 9.600)</span></span>
+            <input type="checkbox" id="nitro" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Rastreador <span class="valor">(R$ 15.600)</span></span>
+            <input type="checkbox" id="rastreador" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Coilover <span class="valor">(R$ 15.600)</span></span>
+            <input type="checkbox" id="coilover" class="checkbox" onchange="calcularTotal()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Estética</h2>
+        <div class="item">
+            <span>Turbo <span class="valor">(R$ 7.800)</span></span>
+            <input type="checkbox" id="turbo" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Cosmetic <span class="valor">(R$ 1.800)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;cosmetic&#39;, -1)">–</button>
+                <div class="qtd-display" id="cosmetic_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;cosmetic&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Buzina <span class="valor">(R$ 1.800)</span></span>
+            <input type="checkbox" id="buzina" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Pintura <span class="valor">(R$ 1.920)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;pintura&#39;, -1)">–</button>
+                <div class="qtd-display" id="pintura_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;pintura&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Rodas <span class="valor">(R$ 4.200)</span></span>
+            <input type="checkbox" id="rodas" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Fumaça Rodas <span class="valor">(R$ 2.160)</span></span>
+            <input type="checkbox" id="fumaca" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Insufilm <span class="valor">(R$ 1.440)</span></span>
+            <input type="checkbox" id="insufilm" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Neon <span class="valor">(R$ 1.440 cada)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;neon&#39;, -1)">–</button>
+                <div class="qtd-display" id="neon_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;neon&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Cor do Neon <span class="valor">(R$ 1.440)</span></span>
+            <input type="checkbox" id="corNeon" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Xenon <span class="valor">(R$ 1.440)</span></span>
+            <input type="checkbox" id="xenon" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Cor do Xenon <span class="valor">(R$ 1.440)</span></span>
+            <input type="checkbox" id="corXenon" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Placa <span class="valor">(R$ 3.000)</span></span>
+            <input type="checkbox" id="placa" class="checkbox" onchange="calcularTotal()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Serviços</h2>
+        <div class="item">
+            <span>Chave de Roda <span class="valor">(R$ 960)</span></span>
+            <input type="checkbox" id="chaveDeRoda" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Kit Reparo (Uso) <span class="valor">(R$ 1.200)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;qtdKits&#39;, -1)">–</button>
+                <div class="qtd-display" id="qtdKits_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;qtdKits&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Pneu (Troca) <span class="valor">(R$ 900)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;qtdPneus&#39;, -1)">–</button>
+                <div class="qtd-display" id="qtdPneus_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;qtdPneus&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Atendimento <span class="valor">(R$ 700)</span></span>
+            <input type="checkbox" id="atendimentoExterno" class="checkbox" onchange="calcularTotal()">
+        </div>
+        <div class="item">
+            <span>Atendimento Norte <span class="valor">(R$ 1.200)</span></span>
+            <input type="checkbox" id="atendimentoExternonorte" class="checkbox" onchange="calcularTotal()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Vendas</h2>
+        <div class="item">
+            <span>Venda Reparo <span class="valor">(R$ 1.200 un)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;qtdKitsVenda&#39;, -1)">–</button>
+                <div class="qtd-display" id="qtdKitsVenda_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;qtdKitsVenda&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Venda Pneu <span class="valor">(R$ 900 un)</span></span>
+            <div class="qtd-box">
+                <button class="btn" onclick="alterarQtd(&#39;qtdPneusVenda&#39;, -1)">–</button>
+                <div class="qtd-display" id="qtdPneusVenda_display">0</div>
+                <button class="btn" onclick="alterarQtd(&#39;qtdPneusVenda&#39;, 1)">+</button>
+            </div>
+        </div>
+        <div class="item">
+            <span>Parceria <span class="valor">(30% desc)</span></span>
+            <input type="checkbox" id="parceria" class="checkbox" onchange="calcularTotal()">
+        </div>
+    </div>
+
+    <div class="total-area">
+        <h1 id="resultado">Total: R$ 0,00</h1>
+        <div class="action-buttons">
+            <button onclick="zerarTudo()" class="main-btn zerar-btn">
+                Zerar
+            </button>
+            <button onclick="finalizarPedido()" class="main-btn finalizar-btn">
+                Finalizar Pedido
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div id="modalPedido" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Resumo da Oficina</h2>
+        </div>
+        <div class="modal-body" id="modalLista">
+            </div>
+        <div class="modal-total" id="modalValorTotal">
+            R$ 0,00
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-fechar" onclick="fecharModal()">Fechar</button>
+            <button class="btn-modal btn-novo" onclick="novoPedido()">Novo Pedido</button>
+        </div>
+    </div>
+</div>
+<footer>
+    <p>Mecânica Oasis Customs</p>
+</footer>
+
+<script>
+    function triggerAnimation(elementId) {
+        const el = document.getElementById(elementId);
+        el.classList.remove('animar-texto');
+        void el.offsetWidth;
+        el.classList.add('animar-texto');
+    }
+
+    function alterarQtd(campo, valor) {
+        const display = document.getElementById(campo + "_display");
+        let atual = Number(display.innerText);
+        atual += valor;
+        if (atual < 0) atual = 0;
+        
+        display.innerText = atual;
+        triggerAnimation(campo + "_display");
+
+        let hidden = document.getElementById(campo);
+        if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.id = campo;
+            document.body.appendChild(hidden);
+        }
+        hidden.value = atual;
+        calcularTotal();
+    }
+
+    function gerenciarCombos(tipo) {
+        const comboFull = document.getElementById('comboFull');
+        const comboFullBlindado = document.getElementById('comboFullBlindado');
+        
+        if (tipo === 'full' && comboFull.checked) {
+            comboFullBlindado.checked = false;
+        } else if (tipo === 'fullBlindado' && comboFullBlindado.checked) {
+            comboFull.checked = false;
+        }
+        calcularTotal();
+    }
+
+    // Variável global para armazenar o valor total numérico
+    let valorTotalCalculado = 0;
+
+    function calcularTotal() {
+        let total = 0;
+
+        const comboFull = document.getElementById('comboFull').checked;
+        const comboFullBlindado = document.getElementById('comboFullBlindado').checked;
+
+        // PERFORMANCE
+        let custoPerformance = 0;
+        custoPerformance += Number(motor.value);
+        custoPerformance += Number(freio.value);
+        custoPerformance += Number(transmissao.value);
+        custoPerformance += Number(suspensao.value);
+        if (turbo.checked) custoPerformance += 7800;
+
+        let custoBlindagem = Number(blindagem.value);
+
+        if (comboFullBlindado) {
+            total += 116400;
+        } else if (comboFull) {
+            total += 84000;
+            total += custoBlindagem;
+        } else {
+            total += custoPerformance;
+            total += custoBlindagem;
+        }
+
+        if (nitro.checked) total += 9600;
+        if (rastreador.checked) total += 15600;
+        if (coilover.checked) total += 15600;
+
+        // ESTÉTICA
+        total += Number(cosmetic_display.innerText) * 1800;
+        total += Number(pintura_display.innerText) * 1920;
+        total += Number(neon_display.innerText) * 1440;
+        
+        if (buzina.checked) total += 1800;
+        if (rodas.checked) total += 4200;
+        if (fumaca.checked) total += 2160;
+        if (insufilm.checked) total += 1440;
+        if (corNeon.checked) total += 1440;
+        if (xenon.checked) total += 1440;
+        if (corXenon.checked) total += 1440;
+        if (placa.checked) total += 3000;
+
+        // SERVIÇOS
+        if (chaveDeRoda.checked) total += 960;
+        total += Number(qtdKits_display.innerText) * 500;
+        total += Number(qtdPneus_display.innerText) * 900;
+        if (atendimentoExterno.checked) total += 700;
+        if (atendimentoExternonorte.checked) total += 1200;
+
+        // VENDAS
+        total += Number(qtdKitsVenda_display.innerText) * 500;
+        total += Number(qtdPneusVenda_display.innerText) * 250;
+
+        // DESCONTO
+        if (parceria.checked) {
+            total = total * 0.7;
+        }
+
+        valorTotalCalculado = total; // Salva na global
+        const resultadoEl = document.getElementById("resultado");
+        resultadoEl.innerText = "Total: R$ " + total.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+        triggerAnimation("resultado");
+    }
+
+    function zerarTudo() {
+        const selects = document.querySelectorAll("select");
+        selects.forEach(sel => sel.value = "0");
+
+        const checks = document.querySelectorAll("input[type='checkbox']");
+        checks.forEach(ch => ch.checked = false);
+
+        const displays = document.querySelectorAll(".qtd-display");
+        displays.forEach(disp => disp.innerText = "0");
+
+        const hiddens = document.querySelectorAll("input[type='hidden']");
+        hiddens.forEach(h => h.value = 0);
+
+        calcularTotal();
+    }
+
+    // === FUNÇÕES DO MODAL ===
+
+    function finalizarPedido() {
+        const modal = document.getElementById('modalPedido');
+        const lista = document.getElementById('modalLista');
+        const totalDisplay = document.getElementById('modalValorTotal');
+        
+        lista.innerHTML = ""; // Limpa lista anterior
+        let itens = [];
+
+        // Verifica Combos
+        if (document.getElementById('comboFull').checked) itens.push("Combo Full Tuning");
+        if (document.getElementById('comboFullBlindado').checked) itens.push("Combo Full + Blindagem");
+
+        // Verifica Selects
+        const selects = document.querySelectorAll("select");
+        selects.forEach(sel => {
+            if(sel.value != "0") {
+                // Pega o texto da opção selecionada
+                let texto = sel.options[sel.selectedIndex].text;
+                // Adiciona o nome do item (ex: Motor Nível 1)
+                itens.push(sel.parentElement.innerText.split('\n')[0] + ": " + texto);
+            }
+        });
+
+        // Verifica Checkboxes simples (exceto combos que já foram)
+        const checkIds = [
+            {id: 'nitro', nome: 'Nitro'}, {id: 'rastreador', nome: 'Rastreador'},
+            {id: 'coilover', nome: 'Coilover'}, {id: 'turbo', nome: 'Turbo'},
+            {id: 'buzina', nome: 'Buzina'}, {id: 'rodas', nome: 'Rodas'},
+            {id: 'fumaca', nome: 'Fumaça Rodas'}, {id: 'insufilm', nome: 'Insufilm'},
+            {id: 'corNeon', nome: 'Cor do Neon'}, {id: 'xenon', nome: 'Xenon'},
+            {id: 'corXenon', nome: 'Cor do Xenon'}, {id: 'placa', nome: 'Placa'},
+            {id: 'chaveDeRoda', nome: 'Chave de Roda'},
+            {id: 'atendimentoExterno', nome: 'Atend. Externo'},
+            {id: 'atendimentoExternonorte', nome: 'Atend. Ext. Norte'}
+        ];
+
+        checkIds.forEach(obj => {
+            if(document.getElementById(obj.id).checked) {
+                itens.push(obj.nome);
+            }
+        });
+
+        // Verifica Quantidades
+        const qtds = [
+            {id: 'cosmetic_display', nome: 'Cosmetic'},
+            {id: 'pintura_display', nome: 'Pintura'},
+            {id: 'neon_display', nome: 'Neon'},
+            {id: 'qtdKits_display', nome: 'Uso Kit Reparo'},
+            {id: 'qtdPneus_display', nome: 'Troca Pneu'},
+            {id: 'qtdKitsVenda_display', nome: 'Venda Kit Reparo'},
+            {id: 'qtdPneusVenda_display', nome: 'Venda Pneu'}
+        ];
+
+        qtds.forEach(obj => {
+            let val = Number(document.getElementById(obj.id).innerText);
+            if(val > 0) {
+                itens.push(`${obj.nome} (x${val})`);
+            }
+        });
+
+        // Desconto
+        if(document.getElementById('parceria').checked) itens.push("Desconto Parceria (30%)");
+
+        // Monta HTML
+        if(itens.length === 0) {
+            lista.innerHTML = "<div style='text-align:center; padding:10px;'>Nenhum item selecionado.</div>";
+        } else {
+            itens.forEach(item => {
+                lista.innerHTML += `<div class="resumo-item"><span>${item}</span></div>`;
+            });
+        }
+
+        totalDisplay.innerText = "Total: R$ " + valorTotalCalculado.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+        
+        // Exibe Modal
+        modal.style.display = "flex";
+    }
+
+    function fecharModal() {
+        document.getElementById('modalPedido').style.display = "none";
+    }
+
+    function novoPedido() {
+        zerarTudo();
+        fecharModal();
+    }
+</script>
+
+
+</body></html>
