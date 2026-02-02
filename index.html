@@ -328,56 +328,92 @@ footer p {
         </div>
     </div>
 
-    <div class="card">
-        <h2>Performance</h2>
-        <div class="item">Motor 
-            <select id="motor" onchange="calcularTotal()">
-                <option value="0">Nenhum</option>
-                <option value="9000">Nível 1 (R$ 9.000)</option>
-                <option value="11760">Nível 2 (R$ 11.760)</option>
-                <option value="13800">Nível 3 (R$ 13.800)</option>
-                <option value="17400">Nível 4 (R$ 17.400)</option>
-                <option value="22200">Nível 5 (R$ 22.200)</option>
-            </select>
+<div class="card">
+    <h2>Performance</h2>
+
+    <div class="item">Motor 
+        <select id="motor" onchange="calcularTotal()">
+            <option value="0">Nenhum</option>
+            <option value="9000">Nível 1 (R$ 9.000)</option>
+            <option value="11760">Nível 2 (R$ 11.760)</option>
+            <option value="13800">Nível 3 (R$ 13.800)</option>
+            <option value="17400">Nível 4 (R$ 17.400)</option>
+            <option value="22200">Nível 5 (R$ 22.200)</option>
+        </select>
+    </div>
+
+    <div class="item">Freio 
+        <select id="freio" onchange="calcularTotal()">
+            <option value="0">Nenhum</option>
+            <option value="9600">Nível 1 (R$ 9.600)</option>
+            <option value="11400">Nível 2 (R$ 11.400)</option>
+            <option value="13200">Nível 3 (R$ 13.200)</option>
+            <option value="17400">Nível 4 (R$ 17.400)</option>
+        </select>
+    </div>
+
+    <div class="item">Transmissão 
+        <select id="transmissao" onchange="calcularTotal()">
+            <option value="0">Nenhum</option>
+            <option value="11400">Nível 1 (R$ 11.400)</option>
+            <option value="13200">Nível 2 (R$ 13.200)</option>
+            <option value="17400">Nível 3 (R$ 17.400)</option>
+            <option value="22200">Nível 4 (R$ 22.200)</option>
+        </select>
+    </div>
+
+    <div class="item">Suspensão 
+        <select id="suspensao" onchange="calcularTotal()">
+            <option value="0">Nenhum</option>
+            <option value="9000">Nível 1 (R$ 9.000)</option>
+            <option value="11400">Nível 2 (R$ 11.400)</option>
+            <option value="13800">Nível 3 (R$ 13.800)</option>
+            <option value="17400">Nível 4 (R$ 17.400)</option>
+            <option value="22200">Nível 5 (R$ 22.200)</option>
+        </select>
+    </div>
+
+    <div class="item">Blindagem 
+        <select id="blindagem" onchange="calcularTotal()">
+            <option value="0">Nenhum</option>
+            <option value="13200">Nível 1 (R$ 13.200)</option>
+            <option value="15000">Nível 2 (R$ 15.000)</option>
+            <option value="19800">Nível 3 (R$ 19.800)</option>
+            <option value="25800">Nível 4 (R$ 25.800)</option>
+            <option value="32400">Nível 5 (R$ 32.400)</option>
+        </select>
+    </div>
+
+    <!-- ITENS DE VENDA AGORA DENTRO DO CARD -->
+
+    <div class="item">
+        <span>Nitro (Venda) <span class="valor">(R$ 9.600)</span></span>
+        <div class="qtd-box">
+            <button class="btn" onclick="alterarQtd('qtdNitro', -1)">–</button>
+            <div class="qtd-display" id="qtdNitro_display">0</div>
+            <button class="btn" onclick="alterarQtd('qtdNitro', 1)">+</button>
         </div>
-        <div class="item">Freio 
-            <select id="freio" onchange="calcularTotal()">
-                <option value="0">Nenhum</option>
-                <option value="9600">Nível 1 (R$ 9.600)</option>
-                <option value="11400">Nível 2 (R$ 11.400)</option>
-                <option value="13200">Nível 3 (R$ 13.200)</option>
-                <option value="17400">Nível 4 (R$ 17.400)</option>
-            </select>
+    </div>
+
+    <div class="item">
+        <span>Rastreador (Venda) <span class="valor">(R$ 15.600)</span></span>
+        <div class="qtd-box">
+            <button class="btn" onclick="alterarQtd('qtdRastreador', -1)">–</button>
+            <div class="qtd-display" id="qtdRastreador_display">0</div>
+            <button class="btn" onclick="alterarQtd('qtdRastreador', 1)">+</button>
         </div>
-        <div class="item">Transmissão 
-            <select id="transmissao" onchange="calcularTotal()">
-                <option value="0">Nenhum</option>
-                <option value="11400">Nível 1 (R$ 11.400)</option>
-                <option value="13200">Nível 2 (R$ 13.200)</option>
-                <option value="17400">Nível 3 (R$ 17.400)</option>
-                <option value="22200">Nível 4 (R$ 22.200)</option>
-            </select>
+    </div>
+
+    <div class="item">
+        <span>Coilover (Venda) <span class="valor">(R$ 15.600)</span></span>
+        <div class="qtd-box">
+            <button class="btn" onclick="alterarQtd('qtdCoilover', -1)">–</button>
+            <div class="qtd-display" id="qtdCoilover_display">0</div>
+            <button class="btn" onclick="alterarQtd('qtdCoilover', 1)">+</button>
         </div>
-        <div class="item">Suspensão 
-            <select id="suspensao" onchange="calcularTotal()">
-                <option value="0">Nenhum</option>
-                <option value="9000">Nível 1 (R$ 9.000)</option>
-                <option value="11400">Nível 2 (R$ 11.400)</option>
-                <option value="13800">Nível 3 (R$ 13.800)</option>
-                <option value="17400">Nível 4 (R$ 17.400)</option>
-                <option value="22200">Nível 5 (R$ 22.200)</option>
-            </select>
-        </div>
-        <div class="item">Blindagem 
-            <select id="blindagem" onchange="calcularTotal()">
-                <option value="0">Nenhum</option>
-                <option value="13200">Nível 1 (R$ 13.200)</option>
-                <option value="15000">Nível 2 (R$ 15.000)</option>
-                <option value="19800">Nível 3 (R$ 19.800)</option>
-                <option value="25800">Nível 4 (R$ 25.800)</option>
-                <option value="32400">Nível 5 (R$ 32.400)</option>
-            </select>
-        </div>
+    </div>
+
+</div>
         <div class="item">
             <span>Nitro <span class="valor">(R$ 9.600)</span></span>
             <input type="checkbox" id="nitro" class="checkbox" onchange="calcularTotal()">
@@ -615,9 +651,9 @@ footer p {
             total += custoBlindagem;
         }
 
-        if (nitro.checked) total += 9600;
-        if (rastreador.checked) total += 15600;
-        if (coilover.checked) total += 15600;
+        // if (nitro.checked) total += 9600;
+        // if (rastreador.checked) total += 15600;
+        // if (coilover.checked) total += 15600;
 
         // ESTÉTICA
         total += Number(cosmetic_display.innerText) * 1800;
@@ -637,6 +673,9 @@ footer p {
         if (chaveDeRoda.checked) total += 960;
         total += Number(qtdKits_display.innerText) * 1200;
         total += Number(qtdPneus_display.innerText) * 900;
+        total += Number(qtdNitro_display.innerText) * 9600;
+        total += Number(qtdRastreador_display.innerText) * 15600;
+        total += Number(qtdCoilover_display.innerText) * 15600;
         if (atendimentoExterno.checked) total += 700;
         if (atendimentoExternonorte.checked) total += 1200;
 
@@ -698,8 +737,8 @@ footer p {
 
         // Verifica Checkboxes simples (exceto combos que já foram)
         const checkIds = [
-            {id: 'nitro', nome: 'Nitro'}, {id: 'rastreador', nome: 'Rastreador'},
-            {id: 'coilover', nome: 'Coilover'}, {id: 'turbo', nome: 'Turbo'},
+            // {id: 'nitro', nome: 'Nitro'}, {id: 'rastreador', nome: 'Rastreador'},
+            // {id: 'coilover', nome: 'Coilover'}, {id: 'turbo', nome: 'Turbo'},
             {id: 'buzina', nome: 'Buzina'}, {id: 'rodas', nome: 'Rodas'},
             {id: 'fumaca', nome: 'Fumaça Rodas'}, {id: 'insufilm', nome: 'Insufilm'},
             {id: 'corNeon', nome: 'Cor do Neon'}, {id: 'xenon', nome: 'Xenon'},
@@ -721,6 +760,9 @@ footer p {
             {id: 'pintura_display', nome: 'Pintura'},
             {id: 'neon_display', nome: 'Neon'},
             {id: 'qtdKits_display', nome: 'Uso Kit Reparo'},
+            {id: 'qtdNitro_display', nome: 'Venda Nitro'},
+            {id: 'qtdRastreador_display', nome: 'Venda Rastreador'},
+            {id: 'qtdCoilover_display', nome: 'Venda Coilover'},
             {id: 'qtdPneus_display', nome: 'Troca Pneu'},
             {id: 'qtdKitsVenda_display', nome: 'Venda Kit Reparo'},
             {id: 'qtdPneusVenda_display', nome: 'Venda Pneu'}
