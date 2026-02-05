@@ -623,19 +623,26 @@ footer p {
         custoPerformance += Number(freio.value);
         custoPerformance += Number(transmissao.value);
         custoPerformance += Number(suspensao.value);
-        if (turbo.checked) custoPerformance += 7800;
+
+        // TURBO É EXTRA (não faz parte do combo)
+        let custoTurbo = turbo.checked ? 7800 : 0;
+
 
         let custoBlindagem = Number(blindagem.value);
 
         if (comboFullBlindado) {
             total += 116400;
+            total += custoTurbo;
         } else if (comboFull) {
             total += 84000;
             total += custoBlindagem;
+            total += custoTurbo;
         } else {
             total += custoPerformance;
             total += custoBlindagem;
+            total += custoTurbo;
         }
+
 
         // if (nitro.checked) total += 9600;
         // if (rastreador.checked) total += 15600;
